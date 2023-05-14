@@ -1,5 +1,6 @@
 # Project ignore
 *.csv
+kladd_*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
