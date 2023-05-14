@@ -2,6 +2,9 @@ import yfinance as yf
 import pandas as pd
 import matplotlib.pyplot as plt
 
+plt.style.use('fivethirtyeight')
+
+
 """rev_trade_strat.py
     Version: 1.0
 """
@@ -21,7 +24,7 @@ def remove_zero_volume(df, resample=None):
     if resample:
         volume = volume.resample(resample).sum()
     new_tickers = []
-    for col, val in volume.iteritems():
+    for col, val in volume.items():
         if val[val != 0].count() > 0:
             new_tickers.append(col)
     return df.loc(axis=1)[:,new_tickers]
@@ -76,7 +79,7 @@ def return_worst_performers(per_data, n_stocks):
     return ret, pd.Series(returns, index=per_data.index[:-1]).cumprod()
 
 def main(csv_file=None, start=None, end=None, n_stocks=3):
-    stocks_raw = stock_list('oslo_all.csv')
+    stocks_raw = stock_list('./ticker_lists/oslo_all.csv')
     if csv_file:
         df = pd.read_csv(csv_file, header=[0,1], index_col=0)
     else:
