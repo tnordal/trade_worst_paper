@@ -1,5 +1,6 @@
 # Project ignore
 *.csv
+*prq
 kladd_*
 
 # Byte-compiled / optimized / DLL files
