@@ -21,6 +21,7 @@
 
 """
 
+import logging
 import pandas as pd
 import yfinance as yf
 
@@ -28,6 +29,26 @@ from rev_trade_strat import remove_zero_volume
 from rev_trade_strat import periodic_return
 from rev_trade_strat import tickers_worst_performers
 
+
+logger = logging.getLogger('backtesting_rev_trade')
+logger.setLevel(logging.DEBUG)
+
+# create file handler which logs even debug messages
+fh = logging.FileHandler('backtesting_rev_trade.log')
+fh.setLevel(logging.DEBUG)
+
+# create console handler with a higher log level
+ch = logging.StreamHandler()
+ch.setLevel(logging.ERROR)
+
+# create formatter and add it to the handlers
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+ch.setFormatter(formatter)
+fh.setFormatter(formatter)
+
+# add the handlers to logger
+logger.addHandler(ch)
+logger.addHandler(fh)
 
 def stock_list(csv_file):
     stocks_ = pd.read_csv(csv_file, header=None)
@@ -67,7 +88,6 @@ def trade_dict_buy(paper_prices, date, invest=10000):
         trade['number'] = num
         trade['total'] = tot
         trades.append(trade)
-    # print(trades)
     return trades
 
 
@@ -86,7 +106,6 @@ def trade_dict_sell(paper_prices, paper_number, date):
         trades.append(trade)
         tot_return += trade['total']
 
-    print(trades)
     return trades, tot_return
 
 
@@ -110,8 +129,7 @@ def test_01():
                     1)[next_papers_to_buy].squeeze()
                 last_df = pd.DataFrame(trade_dict_buy(buy_serie, date))
                 trades_df = pd.concat([trades_df, last_df])
-                print('First buy: ', len(trades_df))
-                print(trades_df.tail(10))
+                logger.debug("First Buy: %s", len(trades_df))
             else:
                 # Sell last_df
                 last_df_sell = last_df[['paper', 'number']]
@@ -121,10 +139,8 @@ def test_01():
                 last_df_sell, return_trade = trade_dict_sell(
                     sell_serie, last_df_sell.to_dict()['number'], date)
                 last_df_sell = pd.DataFrame(last_df_sell)
-                print(last_df_sell)
                 trades_df = pd.concat([trades_df, last_df_sell])
-                print('Sell: ', len(trades_df))
-                print(trades_df.tail(10))
+                logger.debug("Sell: %s", len(trades_df))
 
                 # Buy Next paper
                 next_papers_to_buy = tickers_worst_performers(
@@ -134,8 +150,7 @@ def test_01():
                 last_df = pd.DataFrame(trade_dict_buy(
                     buy_serie, date, round(return_trade/3)))
                 trades_df = pd.concat([trades_df, last_df])
-                print('Buy: ', len(trades_df))
-                print(trades_df.tail(10))
+                logger.debug("Buy: %s", len(trades_df))
 
     trades_df.to_csv('backtesting_trades.csv', index='date')
 
