@@ -159,7 +159,9 @@ def test_01():
                 logger.debug("Buy: %s", len(trades_df))
 
     logger.info('Finish')
-    trades_df.to_csv('backtesting_trades.csv', index='date')
+    trades_df.reset_index(inplace=True)
+    trades_df.drop(trades_df.columns[0], inplace=True, axis=1)
+    trades_df.to_csv('backtesting_trades.csv')
 
 
 if __name__ == '__main__':
