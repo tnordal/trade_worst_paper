@@ -24,7 +24,9 @@
 import pandas as pd
 import yfinance as yf
 
-from rev_trade_strat import remove_zero_volume, periodic_return, tickers_worst_performers
+from rev_trade_strat import remove_zero_volume
+from rev_trade_strat import periodic_return
+from rev_trade_strat import tickers_worst_performers
 
 
 def stock_list(csv_file):
