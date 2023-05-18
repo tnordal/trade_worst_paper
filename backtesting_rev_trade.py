@@ -125,6 +125,7 @@ def test_01():
     trades_df = pd.DataFrame()
     buy_serie = pd.Series()
     last_df = pd.DataFrame()
+    return_trades = list()
     for date in per_ret.index:
         if not date == per_ret.index[-1]:
             if len(buy_serie) == 0:
@@ -133,6 +134,7 @@ def test_01():
                     .head(1)[next_papers_to_buy].squeeze()
                 last_df = pd.DataFrame(trade_dict_buy(buy_serie, date))
                 trades_df = pd.concat([trades_df, last_df])
+                return_trades.append({'date': date, 'return': 10000*3})
                 logger.debug("First Buy: %s", len(trades_df))
             else:
                 # Sell last_df
@@ -146,6 +148,7 @@ def test_01():
                 )
                 last_df_sell = pd.DataFrame(last_df_sell)
                 trades_df = pd.concat([trades_df, last_df_sell])
+                return_trades.append({'date': date, 'return': return_trade})
                 logger.debug("Sell: %s", len(trades_df))
 
                 # Buy Next paper
@@ -158,10 +161,12 @@ def test_01():
                 trades_df = pd.concat([trades_df, last_df])
                 logger.debug("Buy: %s", len(trades_df))
 
-    logger.info('Finish')
+    
+    pd.DataFrame(return_trades).to_csv('total_returns.csv')
     trades_df.reset_index(inplace=True)
     trades_df.drop(trades_df.columns[0], inplace=True, axis=1)
     trades_df.to_csv('backtesting_trades.csv')
+    logger.info('Finish')
 
 
 if __name__ == '__main__':
