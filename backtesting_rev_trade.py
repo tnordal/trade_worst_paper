@@ -127,7 +127,8 @@ def test_01():
         if not date == per_ret.index[-1]:
             if len(buy_serie) == 0:
                 next_papers_to_buy = tickers_worst_performers(per_ret, date, n=3, m=10)
-                buy_serie = df_open.loc[df_open.index > date].head(1)[next_papers_to_buy].squeeze()
+                buy_serie = df_open.loc[df_open.index > date] \
+                    .head(1)[next_papers_to_buy].squeeze()
                 last_df = pd.DataFrame(trade_dict_buy(buy_serie, date))
                 trades_df = pd.concat([trades_df, last_df])
                 logger.debug("First Buy: %s", len(trades_df))
@@ -135,16 +136,23 @@ def test_01():
                 # Sell last_df
                 last_df_sell = last_df[['paper', 'number']]
                 last_df_sell.set_index('paper', inplace=True)
-                sell_serie = df_open.loc[df_open.index > date].head(1)[last_df_sell.index].squeeze()
-                last_df_sell, return_trade = trade_dict_sell(sell_serie, last_df_sell.to_dict()['number'], date)
+                sell_serie = df_open.loc[df_open.index > date] \
+                    .head(1)[last_df_sell.index].squeeze()
+                last_df_sell, return_trade = trade_dict_sell(
+                    sell_serie, last_df_sell.to_dict()['number'],
+                    date
+                )
                 last_df_sell = pd.DataFrame(last_df_sell)
                 trades_df = pd.concat([trades_df, last_df_sell])
                 logger.debug("Sell: %s", len(trades_df))
 
                 # Buy Next paper
                 next_papers_to_buy = tickers_worst_performers(per_ret, date, n=3, m=10)
-                buy_serie = df_open.loc[df_open.index > date].head(1)[next_papers_to_buy].squeeze()
-                last_df = pd.DataFrame(trade_dict_buy(buy_serie, date, round(return_trade/3)))
+                buy_serie = df_open.loc[df_open.index > date] \
+                    .head(1)[next_papers_to_buy].squeeze()
+                last_df = pd.DataFrame(
+                    trade_dict_buy(buy_serie, date, round(return_trade/3))
+                )
                 trades_df = pd.concat([trades_df, last_df])
                 logger.debug("Buy: %s", len(trades_df))
 
