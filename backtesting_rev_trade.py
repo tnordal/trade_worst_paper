@@ -1,6 +1,6 @@
 """backtesting_rev_trade.py
 
-    Version: 0.2
+    Version: 0.3
 
     Backtesting strategy
     ---------------------
@@ -39,7 +39,7 @@ fh.setLevel(logging.DEBUG)
 
 # create console handler with a higher log level
 ch = logging.StreamHandler()
-ch.setLevel(logging.ERROR)
+ch.setLevel(logging.INFO)
 
 # create formatter and add it to the handlers
 formatter = logging.Formatter(
@@ -53,19 +53,21 @@ logger.addHandler(ch)
 logger.addHandler(fh)
 
 
-def stock_list(csv_file):
+def stock_list(csv_file: str) -> list:
     stocks_ = pd.read_csv(csv_file, header=None)
     return stocks_[0].to_list()
 
 
-def download_stocks(tickers, start=None, end=None):
+def download_stocks(
+        tickers: list, start: str=None, end: str=None
+) -> pd.DataFrame:
     _df = yf.download(tickers=tickers, start=start, end=end)
     _df.to_csv('stock_data.csv')
     _df.to_parquet('stock_data.prq')
     return _df
 
 
-def read_data_file(prq_file=None, csv_file=None):
+def read_data_file(prq_file: str=None, csv_file: str=None) -> pd.DataFrame:
     if prq_file:
         _df = pd.read_parquet(path=prq_file)  # , header=[0,1], index_col=0)
     else:
@@ -73,13 +75,13 @@ def read_data_file(prq_file=None, csv_file=None):
     return _df
 
 
-def get_number_tot(price, amount, cost=0):
+def get_number_tot(price: float, amount: float, cost: float=0):
     num = round(amount/price)
     tot = num * price + cost
     return num, tot
 
 
-def trade_dict_buy(paper_prices, date, invest=10000):
+def trade_dict_buy(paper_prices: pd.Series, date: str, invest: float=10000) -> list:
     trades = list()
     for key, value in paper_prices.items():
         trade = dict()
@@ -94,7 +96,7 @@ def trade_dict_buy(paper_prices, date, invest=10000):
     return trades
 
 
-def trade_dict_sell(paper_prices, paper_number, date):
+def trade_dict_sell(paper_prices: pd.Series, paper_number: dict, date: str):
     trades = list()
     tot_return = 0
     for key, value in paper_prices.items():
@@ -156,6 +158,7 @@ def test_01():
                 trades_df = pd.concat([trades_df, last_df])
                 logger.debug("Buy: %s", len(trades_df))
 
+    logger.info('Finish')
     trades_df.to_csv('backtesting_trades.csv', index='date')
 
 
