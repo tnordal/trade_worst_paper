@@ -1,6 +1,6 @@
 """backtesting_rev_trade.py
 
-    Version: 0.1
+    Version: 0.2
 
     Backtesting strategy
     ---------------------
