@@ -161,7 +161,7 @@ def test_01():
                 trades_df = pd.concat([trades_df, last_df])
                 logger.debug("Buy: %s", len(trades_df))
 
-    
+
     pd.DataFrame(return_trades).to_csv('total_returns.csv')
     trades_df.reset_index(inplace=True)
     trades_df.drop(trades_df.columns[0], inplace=True, axis=1)
