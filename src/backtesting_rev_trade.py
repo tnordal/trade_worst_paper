@@ -1,6 +1,6 @@
 """backtesting_rev_trade.py
 
-    Version: 0.3
+    Version: 0.31
 
     Backtesting strategy
     ---------------------
@@ -21,6 +21,8 @@
 
 """
 
+from pathlib import Path
+from os.path import dirname
 import logging
 import pandas as pd
 import yfinance as yf
@@ -29,6 +31,7 @@ from rev_trade_strat import remove_zero_volume
 from rev_trade_strat import periodic_return
 from rev_trade_strat import tickers_worst_performers
 
+BASE_DIR = Path(dirname(__file__)).parent
 
 logger = logging.getLogger('backtesting_rev_trade')
 logger.setLevel(logging.DEBUG)
@@ -62,8 +65,8 @@ def download_stocks(
         tickers: list, start: str=None, end: str=None
 ) -> pd.DataFrame:
     _df = yf.download(tickers=tickers, start=start, end=end)
-    _df.to_csv('stock_data.csv')
-    _df.to_parquet('stock_data.prq')
+    _df.to_csv(Path.joinpath(BASE_DIR, 'data', 'stock_data.csv'))
+    _df.to_parquet(Path.joinpath(BASE_DIR, 'data', 'stock_data.prq'))
     return _df
 
 
@@ -117,8 +120,8 @@ def trade_dict_sell(paper_prices: pd.Series, paper_number: dict, date: str):
 def test_01():
     # papers = stock_list('./ticker_lists/omx_sweeden tickers_all.csv')
     # download_stocks(papers, start='2022-01-01')
-    df = read_data_file(prq_file='stock_data.prq')
-    df['Close'].to_csv('stock_data_close.csv')
+    df = read_data_file(prq_file=Path.joinpath(BASE_DIR, 'data', 'stock_data.prq'))
+    df['Close'].to_csv(Path.joinpath(BASE_DIR, 'data', 'stock_data.csv'))
     filtered_df = remove_zero_volume(df=df, resample=None)
     per_ret = periodic_return(df=filtered_df['Close'], period='W-FRI')
     df_open = df['Open']
@@ -163,10 +166,10 @@ def test_01():
                 logger.debug("Buy: %s", len(trades_df))
 
 
-    pd.DataFrame(return_trades).to_csv('total_returns.csv')
+    pd.DataFrame(return_trades).to_csv(Path.joinpath(BASE_DIR, 'output', 'total_returns.csv'))
     trades_df.reset_index(inplace=True)
     trades_df.drop(trades_df.columns[0], inplace=True, axis=1)
-    trades_df.to_csv('backtesting_trades.csv')
+    trades_df.to_csv(Path.joinpath(BASE_DIR, 'output', 'backtesting_trades.csv'))
     logger.info('Finish')
 
 
