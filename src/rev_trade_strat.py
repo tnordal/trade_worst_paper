@@ -15,7 +15,7 @@ def stock_list(csv_file):
 
 def download_stocks(tickers, start=None, end=None):
     df = yf.download(tickers=tickers, start=start, end=end)
-    df.to_csv('stock_data.csv')
+    df.to_csv('..\\data\\stock_data.csv')
     return df
 
 def remove_zero_volume(df, resample=None):
@@ -79,7 +79,7 @@ def return_worst_performers(per_data, n_stocks):
     return ret, pd.Series(returns, index=per_data.index[:-1]).cumprod()
 
 def main(csv_file=None, start=None, end=None, n_stocks=3):
-    stocks_raw = stock_list('./ticker_lists/oslo_all.csv')
+    stocks_raw = stock_list('..\\ticker_files\\oslo_all.csv')
     if csv_file:
         df = pd.read_csv(csv_file, header=[0,1], index_col=0)
     else:
