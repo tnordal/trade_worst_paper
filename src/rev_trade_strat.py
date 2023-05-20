@@ -1,3 +1,6 @@
+from pathlib import Path
+from os.path import dirname
+
 import yfinance as yf
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -9,13 +12,15 @@ plt.style.use('fivethirtyeight')
     Version: 1.0
 """
 
+BASE_DIR = Path(dirname(__file__)).parent
+
 def stock_list(csv_file):
     stocks_ = pd.read_csv(csv_file, header=None)
     return stocks_[0].to_list()
 
 def download_stocks(tickers, start=None, end=None):
     df = yf.download(tickers=tickers, start=start, end=end)
-    df.to_csv('..\\data\\stock_data.csv')
+    df.to_csv(Path.joinpath(BASE_DIR, 'data', 'stock_data.csv'))
     return df
 
 def remove_zero_volume(df, resample=None):
@@ -79,13 +84,13 @@ def return_worst_performers(per_data, n_stocks):
     return ret, pd.Series(returns, index=per_data.index[:-1]).cumprod()
 
 def main(csv_file=None, start=None, end=None, n_stocks=3):
-    stocks_raw = stock_list('..\\ticker_files\\oslo_all.csv')
+    stocks_raw = stock_list(Path.joinpath(BASE_DIR, 'ticker_files', 'oslo_all.csv'))
     if csv_file:
         df = pd.read_csv(csv_file, header=[0,1], index_col=0)
     else:
         df = download_stocks(stocks_raw, start=start, end=end)
 
-    filtered_df = remove_zero_volume(df=df, resample=None)
+    filtered_df = remove_zero_volume(df=df, resample='D')
     print(len(df['Close'].columns))
     print(len(filtered_df['Close'].columns))
     periodic_data = periodic_return(df=filtered_df['Close'], period='W-FRI')
