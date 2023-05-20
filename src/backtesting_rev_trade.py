@@ -118,11 +118,11 @@ def trade_dict_sell(paper_prices: pd.Series, paper_number: dict, date: str):
 
 
 def test_01():
-    # papers = stock_list('./ticker_lists/omx_sweeden tickers_all.csv')
-    # download_stocks(papers, start='2022-01-01')
+    papers = stock_list(Path.joinpath(BASE_DIR, 'ticker_files', 'oslo_all.csv'))
+    download_stocks(papers, start='2023-01-01')
     df = read_data_file(prq_file=Path.joinpath(BASE_DIR, 'data', 'stock_data.prq'))
     df['Close'].to_csv(Path.joinpath(BASE_DIR, 'data', 'stock_data.csv'))
-    filtered_df = remove_zero_volume(df=df, resample=None)
+    filtered_df = remove_zero_volume(df=df, resample='D')
     per_ret = periodic_return(df=filtered_df['Close'], period='W-FRI')
     df_open = df['Open']
 
