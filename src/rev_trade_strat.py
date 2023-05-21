@@ -16,13 +16,14 @@ from config import (
 plt.style.use('fivethirtyeight')
 
 
+
 def stock_list(csv_file):
     stocks_ = pd.read_csv(csv_file, header=None)
     return stocks_[0].to_list()
 
 def download_stocks(tickers, start=None, end=None):
     df = yf.download(tickers=tickers, start=start, end=end)
-    df.to_csv(os.path.join(STOCK_DATA, 'stock_data.csv'))
+    df.to_csv(os.path.join(STOCK_DATA, 'stock_data_trade.csv'))
     return df
 
 def remove_zero_volume(df, resample=None):
@@ -88,7 +89,7 @@ def return_worst_performers(per_data, n_stocks):
 def main(csv_file=None, start=None, end=None, n_stocks=3):
     stocks_raw = stock_list(os.path.join(TICKER_FILES, 'oslo_all.csv'))
     if csv_file:
-        df = pd.read_csv(csv_file, header=[0,1], index_col=0)
+        df = pd.read_csv(os.path.join(STOCK_DATA, csv_file), header=[0,1], index_col=0)
     else:
         df = download_stocks(stocks_raw, start=start, end=end)
 
@@ -114,5 +115,5 @@ def main(csv_file=None, start=None, end=None, n_stocks=3):
     )
 
 if __name__ == '__main__':
-    # main('stock_data.csv', n_stocks=2)
-    main(start='2023-01-01', n_stocks=3)
+    main('stock_data_trade.csv', n_stocks=3)
+    # main(start='2023-01-01', n_stocks=3)
