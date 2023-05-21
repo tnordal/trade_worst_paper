@@ -1,18 +1,20 @@
-from pathlib import Path
-from os.path import dirname
+"""rev_trade_strat.py
+    Version: 1.0
+"""
+
+import os
 
 import yfinance as yf
 import pandas as pd
 import matplotlib.pyplot as plt
 
+from config import (
+    STOCK_DATA,
+    TICKER_FILES
+)
+
 plt.style.use('fivethirtyeight')
 
-
-"""rev_trade_strat.py
-    Version: 1.0
-"""
-
-BASE_DIR = Path(dirname(__file__)).parent
 
 def stock_list(csv_file):
     stocks_ = pd.read_csv(csv_file, header=None)
@@ -20,7 +22,7 @@ def stock_list(csv_file):
 
 def download_stocks(tickers, start=None, end=None):
     df = yf.download(tickers=tickers, start=start, end=end)
-    df.to_csv(Path.joinpath(BASE_DIR, 'data', 'stock_data.csv'))
+    df.to_csv(os.path.join(STOCK_DATA, 'stock_data.csv'))
     return df
 
 def remove_zero_volume(df, resample=None):
@@ -84,7 +86,7 @@ def return_worst_performers(per_data, n_stocks):
     return ret, pd.Series(returns, index=per_data.index[:-1]).cumprod()
 
 def main(csv_file=None, start=None, end=None, n_stocks=3):
-    stocks_raw = stock_list(Path.joinpath(BASE_DIR, 'ticker_files', 'oslo_all.csv'))
+    stocks_raw = stock_list(os.path.join(TICKER_FILES, 'oslo_all.csv'))
     if csv_file:
         df = pd.read_csv(csv_file, header=[0,1], index_col=0)
     else:
@@ -114,4 +116,3 @@ def main(csv_file=None, start=None, end=None, n_stocks=3):
 if __name__ == '__main__':
     # main('stock_data.csv', n_stocks=2)
     main(start='2023-01-01', n_stocks=3)
-
