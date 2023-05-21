@@ -24,7 +24,7 @@ ignore-patterns=
 # Python code to execute, usually for sys.path manipulation such as
 # pygtk.require().
 #init-hook=
-init-hook='import sys; sys.path.append(r"C:\Users\tnord\OneDrive\Developer\py\trade_worst_paper")'
+; init-hook='import sys; sys.path.append(r"C:\Users\tnord\OneDrive\Developer\py\trade_worst_paper")'
 
 # Use multiple processes to speed up Pylint. Specifying 0 will auto-detect the
 # number of processors available to use.
@@ -71,11 +71,7 @@ disable=print-statement,
         unpacking-in-except,
         old-raise-syntax,
         backtick,
-        long-suffix,
-        old-ne-operator,
-        old-octal-literal,
         import-star-module-level,
-        non-ascii-bytes-literal,
         raw-checker-failed,
         bad-inline-option,
         locally-disabled,
@@ -123,7 +119,6 @@ disable=print-statement,
         range-builtin-not-iterating,
         filter-builtin-not-iterating,
         using-cmp-argument,
-        eq-without-hash,
         div-method,
         idiv-method,
         rdiv-method,
@@ -330,7 +325,7 @@ indent-after-paren=4
 indent-string='    '
 
 # Maximum number of characters on a single line.
-max-line-length=100
+max-line-length=200
 
 # Maximum number of lines in a module.
 max-module-lines=1000
