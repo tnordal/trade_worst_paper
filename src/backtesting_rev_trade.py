@@ -23,6 +23,7 @@
 
 from pathlib import Path
 from os.path import dirname
+from os.path import join
 import logging
 import pandas as pd
 import yfinance as yf
@@ -31,7 +32,11 @@ from rev_trade_strat import remove_zero_volume
 from rev_trade_strat import periodic_return
 from rev_trade_strat import tickers_worst_performers
 
-BASE_DIR = Path(dirname(__file__)).parent
+from config import (
+    STOCK_DATA,
+    TICKER_FILES,
+    REPORTS_DIR
+)
 
 logger = logging.getLogger('backtesting_rev_trade')
 logger.setLevel(logging.DEBUG)
@@ -65,8 +70,8 @@ def download_stocks(
         tickers: list, start: str=None, end: str=None
 ) -> pd.DataFrame:
     _df = yf.download(tickers=tickers, start=start, end=end)
-    _df.to_csv(Path.joinpath(BASE_DIR, 'data', 'stock_data.csv'))
-    _df.to_parquet(Path.joinpath(BASE_DIR, 'data', 'stock_data.prq'))
+    _df.to_csv(join(STOCK_DATA,  'stock_data.csv'))
+    _df.to_parquet(join(STOCK_DATA, 'stock_data.prq'))
     return _df
 
 
@@ -118,11 +123,11 @@ def trade_dict_sell(paper_prices: pd.Series, paper_number: dict, date: str):
 
 
 def test_01():
-    papers = stock_list(Path.joinpath(BASE_DIR, 'ticker_files', 'oslo_all.csv'))
+    papers = stock_list(join(TICKER_FILES, 'oslo_all.csv'))
     download_stocks(papers, start='2023-01-01')
-    df = read_data_file(prq_file=Path.joinpath(BASE_DIR, 'data', 'stock_data.prq'))
-    df['Close'].to_csv(Path.joinpath(BASE_DIR, 'data', 'stock_data.csv'))
-    filtered_df = remove_zero_volume(df=df, resample='D')
+    df = read_data_file(prq_file=join(STOCK_DATA, 'stock_data.prq'))
+    df['Close'].to_csv(join(STOCK_DATA, 'stock_data.csv'))
+    filtered_df = remove_zero_volume(df=df, date='2023-03-31')
     per_ret = periodic_return(df=filtered_df['Close'], period='W-FRI')
     df_open = df['Open']
 
@@ -164,10 +169,10 @@ def test_01():
                 logger.debug("Buy: %s", len(trades_df))
 
 
-    pd.DataFrame(return_trades).to_csv(Path.joinpath(BASE_DIR, 'output', 'total_returns.csv'))
+    pd.DataFrame(return_trades).to_csv(join(REPORTS_DIR, 'total_returns.csv'))
     trades_df.reset_index(inplace=True)
     trades_df.drop(trades_df.columns[0], inplace=True, axis=1)
-    trades_df.to_csv(Path.joinpath(BASE_DIR, 'output', 'backtesting_trades.csv'))
+    trades_df.to_csv(join(REPORTS_DIR, 'backtesting_trades.csv'))
     logger.info('Finish')
 
 
