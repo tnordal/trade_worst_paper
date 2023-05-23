@@ -26,16 +26,16 @@ def download_stocks(tickers, start=None, end=None):
     df.to_csv(os.path.join(STOCK_DATA, 'stock_data_trade.csv'))
     return df
 
-def remove_zero_volume(df, resample=None):
-    volume = df['Volume']
-    volume.index = pd.to_datetime(volume.index)
-    if resample:
-        volume = volume.resample(resample).sum()
-    new_tickers = []
-    for col, val in volume.items():
-        if val[val != 0].count() > 0:
-            new_tickers.append(col)
-    return df.loc(axis=1)[:,new_tickers]
+def remove_zero_volume(df: pd.DataFrame, date: str):
+    df_volume = df['Volume']
+    last_volume = df_volume[df_volume.index > date]
+    tickers = []
+    for col in last_volume:
+        n = len(last_volume[last_volume[col] == 0])
+        if n == 0:
+            tickers.append(col)
+    return df.loc(axis=1)[:, tickers]
+    
 
 def periodic_return(df, period='M'):
     df.index = pd.to_datetime(df.index)
