@@ -127,7 +127,7 @@ def test_01():
     download_stocks(papers, start='2023-01-01')
     df = read_data_file(prq_file=join(STOCK_DATA, 'stock_data.prq'))
     df['Close'].to_csv(join(STOCK_DATA, 'stock_data.csv'))
-    filtered_df = remove_zero_volume(df=df, date='2023-03-31')
+    filtered_df = remove_zero_volume(df=df)
     per_ret = periodic_return(df=filtered_df['Close'], period='W-FRI')
     df_open = df['Open']
 
