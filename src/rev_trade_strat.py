@@ -26,9 +26,9 @@ def download_stocks(tickers, start=None, end=None):
     df.to_csv(os.path.join(STOCK_DATA, 'stock_data_trade.csv'))
     return df
 
-def remove_zero_volume(df: pd.DataFrame, date: str):
+def remove_zero_volume(df: pd.DataFrame, last_rows: int=-20):
     df_volume = df['Volume']
-    last_volume = df_volume[df_volume.index > pd.to_datetime(date)]
+    last_volume = df_volume.iloc[last_rows:]
     tickers = []
     for col in last_volume:
         n = len(last_volume[last_volume[col] == 0])
@@ -93,7 +93,7 @@ def main(csv_file=None, start=None, end=None, n_stocks=3):
     else:
         df = download_stocks(stocks_raw, start=start, end=end)
 
-    filtered_df = remove_zero_volume(df=df, date='2023-03-31')
+    filtered_df = remove_zero_volume(df=df, last_rows=-30)
     print(len(df['Close'].columns))
     print(len(filtered_df['Close'].columns))
     periodic_data = periodic_return(df=filtered_df['Close'], period='W-FRI')
