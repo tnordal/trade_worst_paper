@@ -3,6 +3,8 @@
 *prq
 kladd_*
 .vscode/
+*.lnk
+*xlsx
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
